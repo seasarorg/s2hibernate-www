@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<!-- don't edit start -->
+<head><title>Seasar - DI Container with AOP - </title><meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<link href="seasar_b.css" type="text/css" rel="stylesheet"><script src="seasar_b.js" type="text/JavaScript" language="JavaScript"></script>
+</head><body onload="preload('ja')"><table width="100%" border="0" cellspacing="0" cellpadding="0" align="left" height="100%"><tr>
+<td align="left" valign="top" width="780"><table width="780" border="0" cellspacing="0" cellpadding="0" class="white">
+<tr><td colspan="7"><img height="5" width="780" src="images/top01_b.gif" alt=""></td></tr>
+<tr><td><img height="117" width="235" src="images/top02_b.gif" alt="Seasar"></td>
+<td colspan="3"><img height="117" width="289" src="images/top03.gif" alt="DI Container with AOP"></td>
+<td colspan="3"><img height="117" width="256" src="images/spacer.gif" alt=""></td>
+</tr><tr><td rowspan="2"><img src="images/top04.gif" alt="" height="49" width="235"></td>
+<td><a href="index.html"><img src="images/menu01_b_ja.gif" height="30" width="78" border="0" alt="" id="menu01" onmouseover="swap(1)" onmouseout="restore(1)"></a></td>
+<td><a href="projects.html"><img src="images/menu02_b_ja.gif" height="30" width="101" border="0" alt="" id="menu02" onmouseover="swap(2)" onmouseout="restore(2)"></a></td>
+<td><a href="products.html"><img src="images/menu03_b_ja.gif" height="30" width="110" border="0" alt="" id="menu03" onmouseover="swap(3)" onmouseout="restore(3)"></a></td>
+<td><a href="resources.html"><img src="images/menu04_b_ja.gif" height="30" width="113" border="0" alt="" id="menu04" onmouseover="swap(4)" onmouseout="restore(4)"></a></td>
+<td><img src="images/menu05_b_ja.gif" height="30" width="109" border="0" alt="" id="menu05" onmouseover="swap(5)" onmouseout="restore(5)"></td>
+<td><img height="30" width="34" src="images/menu06.gif" alt=""></td></tr><tr>
+<td colspan="6"><img height="19" width="545" src="images/spacer.gif" alt=""></td></tr></table>
+<table  width="780" border="0" cellspacing="0" cellpadding="0" height="100%" class="white">
+<tr align="left" valign="top"><td width="14"><img height="14" width="14" src="images/spacer.gif" alt=""></td><td width="752" class="main">
+<!-- don't edit end -->
+<!-- document start -->
+
+<ul>	
+<!-- 	2	3	4	5-->
+<li><a href="#Overview">概要</a></li>
+<li><a href="#Reference">リファレンス</a></li>
+<ul>
+<li><a href="#Setup">セットアップ</a></li>
+<li><a href="#Usage">基本的な使い方</a></li>
+<ul>
+<li><a href="#Entity">エンティティ</a></li>
+<li><a href="#dao">Dao(Data Access Object)</a></li>
+<li><a href="#diconFile">diconファイル</a></li>
+<li><a href="#persistence.xml">persistence.xml</a></li>
+</ul>
+</ul>
+</ul>
+
+<h2><a name="Overview">概要</a></h2>
+<p>S2Hibernate3は以下の特徴を持っています。</p>
+<ul>
+<li>Seasar2で管理されているJTAやConnectionPoolと<a href="http://www.hibernate.org/">Hibernate3</a>が簡単に連動するようになります。</li>
+<li>アプリケーションサーバが無くても､簡単にEJB3のPersistence APIを利用することができます。</li>
+</uL>
+
+<h2><a name="Reference">リファレンス</a></h2>
+<h3><a name="Setup">セットアップ</a></h3>
+<ul>
+<li>プロジェクトのインポート</li>
+<p>Java5以上が必要です。S2Hibernate3-xxx.zipを解凍してできたs2hibernate3ディレクトリをEclipseで、｢ファイル→インポート→既存のプロジェクトをワークスペースへ｣でインポートしてください。</p>
+<li>必要なjarファイル</li>
+<p> S2Hibernate3として必要なjarファイルは、s2hibernate3/libにそろってます。Hibernate3はコネクションプールやキャッシュの実装をいろいろ選べるようになっているので、S2Hibernate3で用意していない実装が必要な場合は、<a href="http://www.hibernate.org/">Hibernateのサイト</a>よりダウンロードしてください。</p>
+
+	<li>クラスパス</li>
+	<p>libのjarファイル(hsqldb.jar以外)とresources(j2ee.dicon、s2hibernate3.dicon、log4j.properties、META-INF/persistence.xml)をCLASSPATHにとおせば、S2Hibernate3を実行できます。Eclipseにインポートして使う場合は設定は不要です。</p>
+
+	<li>データベース</li>
+	<p>簡単に機能を試すことができるように、RDBMSとしてHSQLDBを用意しています。lib/hsqldb.jarはHSQLDBを実行する上では必要ですが、本番では必要ありません。</p>
+</ul>
+
+
+<h3><a name="Usage">基本的な使い方</a></h3>
+<!--<h4><a name="作成すべきファイル">作成すべきファイル</a></h4>-->
+<p>S2Hibernate3の機能を使用するにあたり、エンティティ、Dao(.java)、diconファイルの作成が必要になります。</p>
+<h4><a name="Entity">エンティティ</a></h4>
+<p>Persistence APIの仕様に合わせてエンティティを作成します。 </p>
+<h5><a name="dao">Dao(Data Access Object)</a></h5>
+<p>Daoの実装方法</p>
+<ol>
+<li>EntityManager型のフィールドを定義します。
+<pre>private EntityManager entityManager;</pre></li>
+<li>コンストラクタあるいはプロパティ経由で実装オブジェクトを受け取るように記述します。
+<pre>
+public void setEntityManager(EntityManager entityManager) { 
+	this.entityManager = entityManager;
+}</pre>
+</li>
+<li>各メソッドでEntityManagerに対する処理を記述します。</li>
+<pre>
+public Employee getEmployee(int empno) {
+    return (Employee) entityManager.find(Employee.class, 7788);
+}</pre>
+</ol>
+</li>
+
+<h4><a name="diconFile">diconファイル</a></h4>
+<p>j2ee.diconとs2hibernate3.diconを<a href="http://s2container.seasar.org/ja/DIContainer.html#Include">インクルード</a>します。</p>
+
+<h4><a name="persistence.xml">persistence.xml</a></h4>
+<p>クラスパスの通っているディレクトリにresources/META-INFをおきます。META-INFには、次のようなpersistence.xmlを格納します。</p>
+<pre>&lt;entity-manager&gt;<br>   &lt;name&gt;em&lt;/name&gt;<br>   &lt;jta-data-source&gt;j2ee.dataSource&lt;/jta-data-source&gt;<br>   &lt;properties&gt;<br>      &lt;property name=&quot;hibernate.dialect&quot; value=&quot;org.hibernate.dialect.HSQLDialect&quot;/&gt;<br>      &lt;property name=&quot;hibernate.jndi.class&quot; value=&quot;org.seasar.extension.j2ee.JndiContextFactory&quot;/&gt;<br>      &lt;property name=&quot;hibernate.transaction.manager_lookup_class&quot;
+        value=&quot;org.seasar.hibernate3.transaction.S2TransactionManagerLookup&quot;/&gt;<br>      &lt;property name=&quot;hibernate.show_sql&quot; value=&quot;false&quot;/&gt;<br>      &lt;property name=&quot;hibernate.format_sql&quot; value=&quot;true&quot;/&gt;<br>      &lt;property name=&quot;hibernate.use_sql_comments&quot; value=&quot;false&quot;/&gt;<br>   &lt;/properties&gt;<br>&lt;/entity-manager&gt;
+</pre>
+<!-- document end -->
+<!-- don't edit start -->
+</td>
+<td width="14"><img height="14" width="14" src="images/spacer.gif" alt=""></td>
+</tr><tr>
+<td width="14"><img height="30" width="14" src="images/spacer.gif" alt=""></td>
+<td width="766"><img height="30" width="592" src="images/spacer.gif" alt=""></td>
+</tr><tr>
+<td width="14"><img height="14" width="14" src="images/spacer.gif" alt=""></td>
+<td width="766" class="copyright">&copy; Copyright The Seasar Project and the others 2004-2005, all rights reserved.</td>
+</tr></table>
+<td class="backright" align="left" valign="top">&nbsp;</td></tr><tr>
+<td class="backunder" align="left"  valign="top" width="780" height="16">&nbsp;</td>
+<td class="backcorner" align="left" valign="top" height="16">&nbsp;</td>
+</tr></table></body>
+<!-- don't edit end -->
+</html>
