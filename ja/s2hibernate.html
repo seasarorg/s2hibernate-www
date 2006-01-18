@@ -23,7 +23,8 @@
 <!-- document start -->
 <p>
 このドキュメントはS2Hibernateのバージョン1.1.1のものです。<br>
-S2Hibernate1.1.1はSeasar2のバージョン2.2.7以降に対応しています。動作確認はSeasar2.2.11で行っています。
+S2Hibernate1.1.1はSeasar2のバージョン2.2.7～2.3.3に対応しています。2.3.4では動作しないのでご注意ください。<br>
+動作確認はSeasar2.2.11で行っています。
 </p>
 
 <ul>	
@@ -333,15 +334,16 @@ DTOのfromHiredateプロパティの値以下であるという様な条件が4パターン記述されている
 		</tr>
 		<tr>
 			<td>save</td>
-			<td>reate,insert,add<br>ではじまる</td>
+			<td>insert,create,add,save<br>ではじまる</td>
 			<td>戻り値はvoidです。<br>
 			引数の型はエンティティの型と一致させます。</td>
 		</tr>
 		<tr>
 			<td>update</td>
-			<td>update,modify,store<br>ではじまる</td>
+			<td>merge,update<br>ではじまる</td>
 			<td>戻り値はvoidです。<br>
-		引数の型はエンティティの型と一致させます。</td>
+		引数の型はエンティティの型と一致させます。<br>
+		※ Hibernateのupdateは永続オブジェクトをHibernateのSessionに関連づけるメソッドです。</td>
 		</tr>
 		<tr>
 			<td>saveOrUpdate</td>
