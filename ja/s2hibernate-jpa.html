@@ -21,6 +21,9 @@
 <tr align="left" valign="top"><td width="14"><img height="14" width="14" src="images/spacer.gif" alt=""></td><td width="752" class="main">
 <!-- don't edit end -->
 <!-- document start -->
+<p>
+このドキュメントはS2Hibernate-JPAのバージョンEA2のものです。<br>
+</p>
 
 <ul>	
 <!-- 	2	3	4	5-->
@@ -39,9 +42,9 @@
 </ul>
 
 <h2><a name="Overview">概要</a></h2>
-<p>S2Hibernate3は以下の特徴を持っています。</p>
+<p>S2Hibernate-JPAは以下の特徴を持っています。</p>
 <ul>
-<li>Seasar2で管理されているJTAやConnectionPoolと<a href="http://www.hibernate.org/">Hibernate3</a>が簡単に連動するようになります。</li>
+<li>Seasar2で管理されているJTAやConnectionPoolと<a href="http://www.hibernate.org/">Hibernate3</a> + <a href="http://annotations.hibernate.org/">Hibernate Annotations</a> + <a href="http://entitymanager.hibernate.org/">Hibernate EntityManager</a>が簡単に連動するようになります。</li>
 <li>アプリケーションサーバが無くても､簡単にEJB3のPersistence APIを利用することができます。</li>
 </uL>
 
@@ -49,12 +52,16 @@
 <h3><a name="Setup">セットアップ</a></h3>
 <ul>
 <li>プロジェクトのインポート</li>
-<p>Java5以上が必要です。S2Hibernate3-xxx.zipを解凍してできたs2hibernate3ディレクトリをEclipseで、｢ファイル→インポート→既存のプロジェクトをワークスペースへ｣でインポートしてください。</p>
+<p>
+	JDK5以上が必要です。<br>
+	あらかじめSeasar2をダウンロードして、EclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br>
+	S2Hibernate-JPA-Vx.x.x.zipを解凍してできたs2hibernate-jpaディレクトリをEclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br>
+</p>
 <li>必要なjarファイル</li>
-<p> S2Hibernate3として必要なjarファイルは、s2hibernate3/libにそろってます。Hibernate3はコネクションプールやキャッシュの実装をいろいろ選べるようになっているので、S2Hibernate3で用意していない実装が必要な場合は、<a href="http://www.hibernate.org/">Hibernateのサイト</a>よりダウンロードしてください。</p>
+<p> S2Hibernate-JPAとして必要なjarファイルは、s2hibernate-jpa/libにそろってます。Hibernate3はコネクションプールやキャッシュの実装をいろいろ選べるようになっているので、S2Hibernate3で用意していない実装が必要な場合は、<a href="http://www.hibernate.org/">Hibernateのサイト</a>よりダウンロードしてください。</p>
 
 	<li>クラスパス</li>
-	<p>libのjarファイル(hsqldb.jar以外)とresources(j2ee.dicon、s2hibernate3.dicon、log4j.properties、META-INF/persistence.xml)をCLASSPATHにとおせば、S2Hibernate3を実行できます。Eclipseにインポートして使う場合は設定は不要です。</p>
+	<p>libのjarファイル(hsqldb.jar以外)とresources(j2ee.dicon、s2hibernate-jpa.dicon、log4j.properties、META-INF/persistence.xml)をCLASSPATHにとおせば、S2Hibernate-JPAを実行できます。Eclipseにインポートして使う場合は設定は不要です。</p>
 
 	<li>データベース</li>
 	<p>簡単に機能を試すことができるように、RDBMSとしてHSQLDBを用意しています。lib/hsqldb.jarはHSQLDBを実行する上では必要ですが、本番では必要ありません。</p>
@@ -80,18 +87,30 @@ public void setEntityManager(EntityManager entityManager) {
 <li>各メソッドでEntityManagerに対する処理を記述します。</li>
 <pre>
 public Employee getEmployee(int empno) {
-    return (Employee) entityManager.find(Employee.class, 7788);
+    return entityManager.find(Employee.class, 7788);
 }</pre>
 </ol>
 </li>
 
 <h4><a name="diconFile">diconファイル</a></h4>
-<p>j2ee.diconとs2hibernate3.diconを<a href="http://s2container.seasar.org/ja/DIContainer.html#Include">インクルード</a>します。</p>
+<p>j2ee.diconとs2hibernate-jpa.diconを<a href="http://s2container.seasar.org/ja/DIContainer.html#Include">インクルード</a>します。</p>
 
 <h4><a name="persistence.xml">persistence.xml</a></h4>
 <p>クラスパスの通っているディレクトリにresources/META-INFをおきます。META-INFには、次のようなpersistence.xmlを格納します。</p>
-<pre>&lt;entity-manager&gt;<br>   &lt;name&gt;em&lt;/name&gt;<br>   &lt;jta-data-source&gt;j2ee.dataSource&lt;/jta-data-source&gt;<br>   &lt;properties&gt;<br>      &lt;property name=&quot;hibernate.dialect&quot; value=&quot;org.hibernate.dialect.HSQLDialect&quot;/&gt;<br>      &lt;property name=&quot;hibernate.jndi.class&quot; value=&quot;org.seasar.extension.j2ee.JndiContextFactory&quot;/&gt;<br>      &lt;property name=&quot;hibernate.transaction.manager_lookup_class&quot;
-        value=&quot;org.seasar.hibernate3.transaction.S2TransactionManagerLookup&quot;/&gt;<br>      &lt;property name=&quot;hibernate.show_sql&quot; value=&quot;false&quot;/&gt;<br>      &lt;property name=&quot;hibernate.format_sql&quot; value=&quot;true&quot;/&gt;<br>      &lt;property name=&quot;hibernate.use_sql_comments&quot; value=&quot;false&quot;/&gt;<br>   &lt;/properties&gt;<br>&lt;/entity-manager&gt;
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;persistence&gt;
+	&lt;persistence-unit name=&quot;em&quot; transaction-type=&quot;JTA&quot;&gt;
+		&lt;jta-data-source>j2ee.dataSource&lt;/jta-data-source&gt;
+		&lt;properties&gt;
+			&lt;property name=&quot;hibernate.dialect&quot; value=&quot;org.hibernate.dialect.HSQLDialect&quot;/&gt;
+			&lt;property name=&quot;hibernate.jndi.class&quot; value=&quot;org.seasar.extension.j2ee.JndiContextFactory&quot;/&gt;
+			&lt;property name=&quot;hibernate.transaction.manager_lookup_class&quot; value=&quot;org.seasar.hibernate.jpa.transaction.S2TransactionManagerLookup&quot;/&gt;
+			&lt;property name=&quot;hibernate.show_sql&quot; value=&quot;false&quot;/&gt;
+			&lt;property name=&quot;hibernate.format_sql&quot; value=&quot;true&quot;/&gt;
+			&lt;property name=&quot;hibernate.use_sql_comments&quot; value=&quot;false&quot;/&gt;
+		&lt;/properties&gt;
+	&lt;/persistence-unit&gt;
+&lt;/persistence&gt;
 </pre>
 <!-- document end -->
 <!-- don't edit start -->

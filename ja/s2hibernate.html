@@ -22,9 +22,10 @@
 <!-- don't edit end -->
 <!-- document start -->
 <p>
-このドキュメントはS2Hibernateのバージョン1.1.1のものです。<br>
-S2Hibernate1.1.1はSeasar2のバージョン2.2.7～2.3.3に対応しています。2.3.4では動作しないのでご注意ください。<br>
-動作確認はSeasar2.2.11で行っています。
+このドキュメントはS2Hibernateのバージョン1.1.2のものです。<br>
+S2Hibernate1.1.2はSeasar2のバージョン2.3.4以降に対応しています。2.3.3以前では動作しないのでご注意ください。<br>
+Seasar2のバージョン2.2.7～2.3.3と組み合わせる場合はS2Hibernate1.1.1をお使いください。<br>
+S2Hibernate1.1.2はHibernate 2.1.8とHibernate 3.1.1でテストし、これらをバンドルしています。
 </p>
 
 <ul>	
@@ -96,14 +97,24 @@ SessionはJTAのトランザクション中は維持され、トランザクションの終了時に自動的にク
 <h2><a name="リファレンス">S2Hibernateリファレンス</a></h2>
 <h3><a name="Setup">セットアップ</a></h3>
 <ul>
-	<li>ソースのインポート</li>
-	<p>S2と同様にJDK1.4以上が必要です。S2Hibernate-Vx.x.x.zipを解凍してできたs2hibernateディレクトリをEclipseのJavaプロジェクトとして丸ごとインポートしてください。.classpathを上書きするか聞かれるので、すべてはいのボタンをクリックして、すべてを取り込みます。 これで、私と全く同じ環境になります。src/examples配下にサンプルもあります。</p>
+	<li>Eclipseへのインポート</li>
+	<p>
+	S2と同様にJDK1.4以上が必要です。<br>
+	あらかじめSeasar2をダウンロードして、EclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br>
+	S2Hibernate-Vx.x.x.zipを解凍してできたs2hibernateディレクトリをEclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br>
+	</p>
 
 	<li>必要なjarファイル</li>
-	<p> S2Hibernateとして必要なjarファイルは、s2hibernate/libにそろってます。Hibernateはコネクションプールやキャッシュの実装をいろいろ選べるようになっているので、S2Hibernateで用意していない実装が必要な場合は、<a href="http://www.hibernate.org/">Hibernateのサイト</a>よりダウンロードしてください。</p>
+	<p>
+	S2Hibernateとして必要なjarファイルは、s2hibernate/lib以下にそろってます。<br>
+	s2hibernate/lib直下にはHibernate 2およびHibernate 3のどちらを使う場合でも必要なjarファイルがあります。<br>
+	Hibernate 2を使う場合に必要なjarファイルはs2hibernate/lib/hibernate2、Hibernate 3を使う場合に必要なjarファイルはs2hibernate/lib/hibernate3以下にあります。<br>
+	利用するHibernateのバージョンに合わせて選択してください。<br>
+	Hibernateはコネクションプールやキャッシュの実装をいろいろ選べるようになっているので、S2Hibernateで用意していない実装が必要な場合は、<a href="http://www.hibernate.org/">Hibernateのサイト</a>よりダウンロードしてください。
+	</p>
 
 	<li>クラスパス</li>
-	<p>libのjarファイル(hsqldb.jar以外)とsrcのhibernate.cfg.xml、ehcache.xml、j2ee.dicon、log4j.propertiesをCLASSPATHにとおせば、S2Hibernateを実行できます。Eclipseにインポートして使う場合は設定は不要です。</p>
+	<p>libのjarファイル(hsqldb.jarは必要に応じて)とlib/hibernate2またはlib/hibernate3のjarファイル、srcのhibernate.cfg.xml、ehcache.xml、j2ee.dicon、log4j.propertiesをCLASSPATHにとおせば、S2Hibernateを実行できます。Eclipseにインポートして使う場合は設定は不要です。</p>
 
 	<li>データベース</li>
 	<p>簡単に機能を試すことができるように、RDBMSとしてHSQLDBを用意しています。機能を試す前にあらかじめHSQLDBを実行しておいてください。HSQLDBを実行するには、bin/runHsqldb.batをダブルクリック(Windowsの場合)します。lib/hsqldb.jarはHSQLDBを実行する上では必要ですが、本番では必要ありません。</p>
