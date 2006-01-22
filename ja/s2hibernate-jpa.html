@@ -54,11 +54,14 @@
 <li>プロジェクトのインポート</li>
 <p>
 	JDK5以上が必要です。<br>
-	あらかじめSeasar2をダウンロードして、EclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br>
-	S2Hibernate-JPA-Vx.x.x.zipを解凍してできたs2hibernate-jpaディレクトリをEclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br>
+	あらかじめ<a href="http://s2container.seasar.org/ja/">Seasar2</a>をダウンロードして、EclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br>
+	S2Hibernate-JPA-x.x.x.zipを解凍してできたs2hibernate-jpaディレクトリをEclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br>
 </p>
-<li>必要なjarファイル</li>
-<p> S2Hibernate-JPAとして必要なjarファイルは、s2hibernate-jpa/libにそろってます。Hibernate3はコネクションプールやキャッシュの実装をいろいろ選べるようになっているので、S2Hibernate3で用意していない実装が必要な場合は、<a href="http://www.hibernate.org/">Hibernateのサイト</a>よりダウンロードしてください。</p>
+	<li>必要なjarファイル</li>
+	<p>
+	S2Hibernate-JPAとして必要なjarファイルは、s2hibernate-jpa/libにそろってます。この他に<a href="http://s2container.seasar.org/ja/">Seasar2</a>のjarファイルが必要です。<br>
+	Hibernate3はコネクションプールやキャッシュの実装をいろいろ選べるようになっているので、S2Hibernate3で用意していない実装が必要な場合は、<a href="http://www.hibernate.org/">Hibernateのサイト</a>よりダウンロードしてください。
+	</p>
 
 	<li>クラスパス</li>
 	<p>libのjarファイル(hsqldb.jar以外)とresources(j2ee.dicon、s2hibernate-jpa.dicon、log4j.properties、META-INF/persistence.xml)をCLASSPATHにとおせば、S2Hibernate-JPAを実行できます。Eclipseにインポートして使う場合は設定は不要です。</p>
