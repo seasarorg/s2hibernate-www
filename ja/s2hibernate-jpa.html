@@ -22,7 +22,7 @@
 <!-- don't edit end -->
 <!-- document start -->
 <p>
-このドキュメントはS2Hibernate-JPAのバージョンEA2のものです。<br>
+このドキュメントはS2Hibernate-JPAのバージョン1.0.0-beta-1のものです。<br>
 </p>
 
 <ul>	
@@ -44,8 +44,8 @@
 <h2><a name="Overview">概要</a></h2>
 <p>S2Hibernate-JPAは以下の特徴を持っています。</p>
 <ul>
-<li>Seasar2で管理されているJTAやConnectionPoolと<a href="http://www.hibernate.org/">Hibernate3</a> + <a href="http://annotations.hibernate.org/">Hibernate Annotations</a> + <a href="http://entitymanager.hibernate.org/">Hibernate EntityManager</a>が簡単に連動するようになります。</li>
-<li>アプリケーションサーバが無くても､簡単にEJB3のPersistence APIを利用することができます。</li>
+<li>Seasar2で管理されているJava Transaction API (JTA)やConnectionPoolと<a href="http://www.hibernate.org/">Hibernate3</a> + <a href="http://annotations.hibernate.org/">Hibernate Annotations</a> + <a href="http://entitymanager.hibernate.org/">Hibernate EntityManager</a>が簡単に連動するようになります。</li>
+<li>アプリケーションサーバが無くても､簡単にEJB3のJava Persistence API (JPA)を利用することができます。</li>
 </uL>
 
 <h2><a name="Reference">リファレンス</a></h2>
@@ -54,17 +54,17 @@
 <li>プロジェクトのインポート</li>
 <p>
 	JDK5以上が必要です。<br>
-	あらかじめ<a href="http://s2container.seasar.org/ja/">Seasar2</a>をダウンロードして、EclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br>
+	あらかじめ<a href="http://s2container.seasar.org/ja/">Seasar2とS2-Tiger</a>をダウンロードして、EclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br>
 	S2Hibernate-JPA-x.x.x.zipを解凍してできたs2hibernate-jpaディレクトリをEclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br>
 </p>
 	<li>必要なjarファイル</li>
 	<p>
-	S2Hibernate-JPAとして必要なjarファイルは、s2hibernate-jpa/libにそろってます。この他に<a href="http://s2container.seasar.org/ja/">Seasar2</a>のjarファイルが必要です。<br>
-	Hibernate3はコネクションプールやキャッシュの実装をいろいろ選べるようになっているので、S2Hibernate3で用意していない実装が必要な場合は、<a href="http://www.hibernate.org/">Hibernateのサイト</a>よりダウンロードしてください。
+	S2Hibernate-JPAとして必要なjarファイルは、s2hibernate-jpa/libにそろってます。この他に<a href="http://s2container.seasar.org/ja/">Seasar2およびS2-Tiger</a>のjarファイルが必要です。<br>
+	Hibernate3はコネクションプールやキャッシュの実装をいろいろ選べるようになっているので、S2Hibernate-JPAで用意していない実装が必要な場合は、<a href="http://www.hibernate.org/">Hibernateのサイト</a>よりダウンロードしてください。
 	</p>
 
 	<li>クラスパス</li>
-	<p>libのjarファイル(hsqldb.jar以外)とresources(j2ee.dicon、s2hibernate-jpa.dicon、log4j.properties、META-INF/persistence.xml)をCLASSPATHにとおせば、S2Hibernate-JPAを実行できます。Eclipseにインポートして使う場合は設定は不要です。</p>
+	<p>libのjarファイル(hsqldb.jar以外)とresources(jdbc.dicon、s2hibernate-jpa.dicon、log4j.properties、META-INF/persistence.xml)をCLASSPATHにとおせば、S2Hibernate-JPAを実行できます。Eclipseにインポートして使う場合は設定は不要です。</p>
 
 	<li>データベース</li>
 	<p>簡単に機能を試すことができるように、RDBMSとしてHSQLDBを用意しています。lib/hsqldb.jarはHSQLDBを実行する上では必要ですが、本番では必要ありません。</p>
@@ -73,7 +73,7 @@
 
 <h3><a name="Usage">基本的な使い方</a></h3>
 <!--<h4><a name="作成すべきファイル">作成すべきファイル</a></h4>-->
-<p>S2Hibernate3の機能を使用するにあたり、エンティティ、Dao(.java)、diconファイルの作成が必要になります。</p>
+<p>S2Hibernate-JPAの機能を使用するにあたり、エンティティ、Dao(.java)、diconファイル、persistence.xmlの作成が必要になります。</p>
 <h4><a name="Entity">エンティティ</a></h4>
 <p>Persistence APIの仕様に合わせてエンティティを作成します。 </p>
 <h5><a name="dao">Dao(Data Access Object)</a></h5>
@@ -95,15 +95,12 @@ public Employee getEmployee(int empno) {
 </ol>
 </li>
 
-<h4><a name="diconFile">diconファイル</a></h4>
-<p>j2ee.diconとs2hibernate-jpa.diconを<a href="http://s2container.seasar.org/ja/DIContainer.html#Include">インクルード</a>します。</p>
-
 <h4><a name="persistence.xml">persistence.xml</a></h4>
-<p>クラスパスの通っているディレクトリにresources/META-INFをおきます。META-INFには、次のようなpersistence.xmlを格納します。</p>
+<p>クラスパスの通っているディレクトリにMETA-INFディレクトリを作成します。META-INFには、次のようなpersistence.xmlを格納します。</p>
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;persistence&gt;
-	&lt;persistence-unit name=&quot;em&quot; transaction-type=&quot;JTA&quot;&gt;
-		&lt;jta-data-source>j2ee.dataSource&lt;/jta-data-source&gt;
+	&lt;persistence-unit name=&quot;<b>persistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
+		&lt;jta-data-source><b>jdbc/DataSource</b>&lt;/jta-data-source&gt;
 		&lt;properties&gt;
 			&lt;property name=&quot;hibernate.dialect&quot; 
 			    value=&quot;org.hibernate.dialect.HSQLDialect&quot;/&gt;
@@ -121,6 +118,97 @@ public Employee getEmployee(int empno) {
 	&lt;/persistence-unit&gt;
 &lt;/persistence&gt;
 </pre>
+<p>
+データソース名は、jdbc.diconの<var>名前空間名.DataSourceコンポーネント名</var>と一致させてください。
+</p>
+
+<h4><a name="diconFile">diconファイル</a></h4>
+<p>
+s2hibernate-jpa.diconを<a href="http://s2container.seasar.org/ja/DIContainer.html#Include">インクルード</a>します。
+</p>
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.3//EN&quot; 
+	&quot;http://www.seasar.org/dtd/components23.dtd&quot;&gt;
+&lt;components namespace=&quot;s2hibernateJPA&quot;&gt;
+	&lt;include path=&quot;javaee5.dicon&quot;/&gt;
+
+	&lt;component name=&quot;entityManagerFactory&quot; class=&quot;javax.persistence.EntityManagerFactory&quot;&gt;
+		jpa.persistenceUnitManager.getEntityManagerFactory(&quot;<b>persistenceUnit</b>&quot;)
+	&lt;/component&gt;
+
+	&lt;component name=&quot;entityManager&quot; class=&quot;org.seasar.framework.jpa.TxScopedEntityManagerProxy&quot;/&gt;
+	
+	&lt;component class=&quot;org.seasar.hibernate.jpa.unit.HibernateProxiedObjectResolver&quot;/&gt;
+&lt;/components&gt;</pre>
+<p>
+jpa.persistenceUnitManager.getEntityManagerFactory()に渡す永続ユニット名はpersistence.xmlの定義と一致させてください。
+</p>
+
+<h3><a name="multiple">複数の永続ユニットの使い方</a></h3>
+<p>
+複数のJPA実装を使う場合や、複数のJDBC DataSourceを使う場合などは、それぞれごとにpersistence.xmlとs2hibernate-jpa.diconを用意し、異なったクラスパス上のディレクトリまたはJarファイルに配置します。<br>
+例えば、次のような構成にします。
+<ul>
+	<li>foo-classes
+	<ul>
+		<li>META-INF</li>
+		<ul>
+			<li>persistence.xml</li>
+		</ul>
+		<li>foo-jpa.dicon</li>
+		<li><var>エンティティクラス</var></li>
+	</ul>
+	<li>bar-classes
+	<ul>
+		<li>META-INF</li>
+		<ul>
+			<li>persistence.xml</li>
+		</ul>
+		<li>bar-jpa.dicon</li>
+		<li><var>エンティティクラス</var></li>
+	</ul>
+</ul>
+foo-classes/META-INF/persistence.xmlを次のようにします。
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;persistence&gt;
+	&lt;persistence-unit name=&quot;<b>fooPersistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
+		&lt;jta-data-source><b>jdbc/fooDataSource</b>&lt;/jta-data-source&gt;
+	．．．
+</pre>
+foo-classes/foo-jpa.diconを次のようにします。
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.3//EN&quot; 
+	&quot;http://www.seasar.org/dtd/components23.dtd&quot;&gt;
+&lt;components namespace=&quot;<b>fooJPA</b>&quot;&gt;
+	&lt;include path=&quot;javaee5.dicon&quot;/&gt;
+
+	&lt;component name=&quot;<b>fooEntityManagerFactory</b>&quot; class=&quot;javax.persistence.EntityManagerFactory&quot;&gt;
+		jpa.persistenceUnitManager.getEntityManagerFactory(&quot;<b>fooPersistenceUnit</b>&quot;)
+	&lt;/component&gt;
+
+	&lt;component name=&quot;<b>fooEntityManager</b>&quot; class=&quot;org.seasar.framework.jpa.TxScopedEntityManagerProxy&quot;/&gt;</pre>
+<br>
+bar-classes/META-INF/persistence.xmlを次のようにします。
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;persistence&gt;
+	&lt;persistence-unit name=&quot;<b>barPersistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
+		&lt;jta-data-source><b>jdbc/barDataSource</b>&lt;/jta-data-source&gt;
+	．．．
+</pre>
+bar-classes/bar-jpa.diconを次のようにします。
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.3//EN&quot; 
+	&quot;http://www.seasar.org/dtd/components23.dtd&quot;&gt;
+&lt;components namespace=&quot;<b>barJPA</b>&quot;&gt;
+	&lt;include path=&quot;javaee5.dicon&quot;/&gt;
+
+	&lt;component name=&quot;<b>barEntityManagerFactory</b>&quot; class=&quot;javax.persistence.EntityManagerFactory&quot;&gt;
+		jpa.persistenceUnitManager.getEntityManagerFactory(&quot;<b>barPersistenceUnit</b>&quot;)
+	&lt;/component&gt;
+
+	&lt;component name=&quot;<b>barEntityManager</b>&quot; class=&quot;org.seasar.framework.jpa.TxScopedEntityManagerProxy&quot;/&gt;</pre>
+</p>
+
 <!-- document end -->
 <!-- don't edit start -->
 </td>
