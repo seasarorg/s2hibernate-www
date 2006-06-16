@@ -38,6 +38,7 @@
 <li><a href="#diconFile">diconファイル</a></li>
 <li><a href="#persistence.xml">persistence.xml</a></li>
 </ul>
+<li><a href="#multiple">複数の永続ユニットの使い方</a></li>
 </ul>
 </ul>
 
@@ -73,10 +74,14 @@
 
 <h3><a name="Usage">基本的な使い方</a></h3>
 <!--<h4><a name="作成すべきファイル">作成すべきファイル</a></h4>-->
-<p>S2Hibernate-JPAの機能を使用するにあたり、エンティティ、Dao(.java)、diconファイル、persistence.xmlの作成が必要になります。</p>
+<p>
+S2Hibernate-JPAの機能を使用するにあたり、エンティティ、Dao(.java)、diconファイル、persistence.xmlの作成が必要になります。
+</p>
+
 <h4><a name="Entity">エンティティ</a></h4>
 <p>Persistence APIの仕様に合わせてエンティティを作成します。 </p>
-<h5><a name="dao">Dao(Data Access Object)</a></h5>
+
+<h4><a name="dao">Dao(Data Access Object)</a></h4>
 <p>Daoの実装方法</p>
 <ol>
 <li>EntityManager型のフィールドを定義します。
@@ -121,6 +126,19 @@ public Employee getEmployee(int empno) {
 <p>
 データソース名は、jdbc.diconの<var>名前空間名.DataSourceコンポーネント名</var>と一致させてください。
 </p>
+<p>
+persistence.xmlとエンティティクラスはクラスパス上の同一のディレクトリまたはJarファイルに配置する必要があります。
+<ul>
+	<li>classes (クラスパスに設定されるディレクトリ）</li>
+	<ul>
+		<li>META-INF</li>
+		<ul>
+			<li>persistence.xml</li>
+		</ul>
+		<li><var>エンティティクラス</var></li>
+	</ul>
+</ul>
+</p>
 
 <h4><a name="diconFile">diconファイル</a></h4>
 <p>
@@ -146,36 +164,22 @@ jpa.persistenceUnitManager.getEntityManagerFactory()に渡す永続ユニット名はpersis
 
 <h3><a name="multiple">複数の永続ユニットの使い方</a></h3>
 <p>
-複数のJPA実装を使う場合や、複数のJDBC DataSourceを使う場合などは、それぞれごとにpersistence.xmlとs2hibernate-jpa.diconを用意し、異なったクラスパス上のディレクトリまたはJarファイルに配置します。<br>
-例えば、次のような構成にします。
-<ul>
-	<li>foo-classes
-	<ul>
-		<li>META-INF</li>
-		<ul>
-			<li>persistence.xml</li>
-		</ul>
-		<li>foo-jpa.dicon</li>
-		<li><var>エンティティクラス</var></li>
-	</ul>
-	<li>bar-classes
-	<ul>
-		<li>META-INF</li>
-		<ul>
-			<li>persistence.xml</li>
-		</ul>
-		<li>bar-jpa.dicon</li>
-		<li><var>エンティティクラス</var></li>
-	</ul>
-</ul>
-foo-classes/META-INF/persistence.xmlを次のようにします。
+複数のJPA実装を使う場合や、複数のJDBC DataSourceを使う場合などは、それぞれごとにs2hibernate-jpa.diconのコピーを用意します。
+</p>
+<p>
+persistence.xmlを次のようにします。
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;persistence&gt;
 	&lt;persistence-unit name=&quot;<b>fooPersistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
 		&lt;jta-data-source><b>jdbc/fooDataSource</b>&lt;/jta-data-source&gt;
 	．．．
+	&lt;/persistence-unit&gt;
+	&lt;persistence-unit name=&quot;<b>barPersistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
+		&lt;jta-data-source><b>jdbc/barDataSource</b>&lt;/jta-data-source&gt;
+	．．．
+	&lt;/persistence-unit&gt;
 </pre>
-foo-classes/foo-jpa.diconを次のようにします。
+foo-jpa.diconを次のようにします。
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.3//EN&quot; 
 	&quot;http://www.seasar.org/dtd/components23.dtd&quot;&gt;
@@ -188,13 +192,6 @@ foo-classes/foo-jpa.diconを次のようにします。
 
 	&lt;component name=&quot;<b>fooEntityManager</b>&quot; class=&quot;org.seasar.framework.jpa.TxScopedEntityManagerProxy&quot;/&gt;</pre>
 <br>
-bar-classes/META-INF/persistence.xmlを次のようにします。
-<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;persistence&gt;
-	&lt;persistence-unit name=&quot;<b>barPersistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
-		&lt;jta-data-source><b>jdbc/barDataSource</b>&lt;/jta-data-source&gt;
-	．．．
-</pre>
 bar-classes/bar-jpa.diconを次のようにします。
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.3//EN&quot; 
