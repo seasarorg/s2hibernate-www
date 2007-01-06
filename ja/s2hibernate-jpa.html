@@ -226,10 +226,12 @@ SMART deployによる自動検出ではなく、Hibernateに備わる自動検�
 Hibernateにはエンティティクラスとマッピングファイルを自動検出する機能がありますが以下のような制限があります。
 </p>
 <ul>
-<li>クラスパス上のpersistence.xmlと同一のディレクトリまたはjarにあるエンティティクラスしか検出できない。 </li>
-<li>クラスパス上のpersistence.xmlと同一のディレクトリまたはjarにある標準のマッピングファイル（META-INF/orm.xml）とHibernate固有のマッピングファイル(hbm.xml)しか検出できない。</li></ul>
+<li>通常は、クラスパス上のpersistence.xmlと同一のディレクトリまたはjarにあるエンティティクラスしか検出できない。特定のjarファイルからエンティティクラスを検出することもができるが、それにはpersistence.xmlのjar-file要素にjarファイルの指定が必要になる。</li>
+<li>通常は、クラスパス上のpersistence.xmlと同一のディレクトリまたはjarにある標準のマッピングファイル（META-INF/orm.xml）とHibernate固有のマッピングファイル(hbm.xml)しか検出できない。特定のjarファイルからHibernate固有のマッピングファイル(hbm.xml)を検出することもできるが、それにはpersistence.xmlのjar-file要素にjarファイルの指定が必要になる。</li>
+</ul>
 <p>
-    S2Hibernate-JPAではエンティティクラスやマッピングファイルがpersistence.xmlと同一のディレクトリまたはjarに存在するかしないかに関係なく、クラスパス上にありさえすれば<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.html">SMART deploy</a>の規約に則ってそれらを自動検出できます。また、マッピングファイルについては標準のマッピングファイル（META-INF/orm.xml）以外のマッピングファイルも自動検出できます。
+S2Hibernate-JPAではエンティティクラスやマッピングファイルがpersistence.xmlと同一のディレクトリまたはjarに存在するかしないかに関係なく、クラスパス上にありさえすれば<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.html">SMART deploy</a>の規約に則ってそれらを自動検出できます。また、マッピングファイルについては標準のマッピングファイル（META-INF/orm.xml）以外のマッピングファイルも自動検出できます。
+jarファイルからエンティティクラスやマッピングファイルを検出する場合でもpersistence.xmlのjar-file要素にjarファイルの指定は不要です。
 </p>
 
 
@@ -257,10 +259,10 @@ SMART deployの規約に則った自動検出を有効にするには次の設�
 <dd>
     エンティティパッケージ以下のエンティティクラスを自動検出します。エンティティパッケージとはconvention.diconに指定したルートパッケージの直下の個別パッケージ名がentityであるパッケージです。</dd><dt style="text-indent: 1em"><b>org.seasar.framework.jpa.autodetector.MappingFileAutoDetector </b></dt>
 <dd>
-    META-INFディレクトリ以下とエンティティパッケージ以下のxxxOrm.xml(xxxは任意の値)という名称のマッピングファイルを自動検出します。エンティティパッケージとはconvention.diconに指定したルートパッケージの直下の個別パッケージ名がentityであるパッケージです。</dd><dt style="text-indent: 1em"><b>org.seasar.hibernate.jpa.impl.S2HibernateConfigurationImpl</b></dt>
+    META-INFディレクトリ以下とエンティティパッケージ以下のxxxOrm.xml(xxxは任意の値)という名称のマッピングファイルを自動検出します。エンティティパッケージとはconvention.diconに指定したルートパッケージの直下の個別パッケージ名がentityであるパッケージです。ここでのマッピングファイルとはJPAのマッピングファイルです。Hibernate固有のマッピングファイル（hbm.xml）ではありません。</dd><dt style="text-indent: 1em"><b>org.seasar.hibernate.jpa.impl.S2HibernateConfigurationImpl</b></dt>
 <dd>
     エンティティクラスやマッピングファイルに関する設定情報です。ここに指定されたエンティティクラスやマッピングファイルはEntityManagerFactoryの初期化前にHibernateの永続ユニットに登録されます。複数のPersistenceClassAutoDetectorとMappingFileAutoDetectorが<a href="http://s2container.seasar.org/ja/DIContainer.html#AutoBindingMode">自動バインディング</a>されます。自動バインディングされたPersistenceClassAutoDetectorとMappingFileAutoDetectorによって検出されたエンティティクラスやマッピングファイルはすべての永続ユニットに登録されます。特定の永続ユニットに対してのみ登録したい場合は、永続ユニットを指定してPersistenceClassAutoDetectorとMappingFileAutoDetectorを明示的にインジェクションしてください。<br/>
-    このコンポーネントには特定のエンティティクラスとマッピングファイルを直接登録することもできます。&nbsp;</dd></dl>
+    このコンポーネントには特定のエンティティクラスとマッピングファイルを直接登録することもできます。</dd></dl>
 
 <h3><a name="test">効率的なテストの実行方法</a></h3>
 <p>
