@@ -97,8 +97,8 @@
 	S2Hibernate-JPAとして必要なjarファイルは、s2hibernate-jpa/libにそろってます。この他に<a href="http://s2container.seasar.org/ja/">Seasar2およびS2-Tiger</a>のjarファイルが必要です。<br/>
 	Hibernate3はコネクションプールやキャッシュの実装をいろいろ選べるようになっているので、S2Hibernate-JPAで用意していない実装が必要な場合は、<a href="http://www.hibernate.org/">Hibernateのサイト</a>よりダウンロードしてください。<br/>
 </li>
-<li>クラスパス libのjarファイル(hsqldb.jar以外)とresources(convention.dicon、jdbc.dicon、jpa.dicon、log4j.properties、META-INF/persistence.xml)をCLASSPATHにとおせば、S2Hibernate-JPAを実行できます。SMART
-    Deployの規約を使用しない場合は、convention.diconは必要ありません。Eclipseにインポートして使う場合は、resourcesディレクトリ以下のファイルを自プロジェクトにコピーし、プロジェクトに適した設定に変更し使用してください。<br/>
+<li>クラスパス libのjarファイル(hsqldb.jar以外)とresources(jdbc.dicon、jpa.dicon、log4j.properties、META-INF/persistence.xml)をCLASSPATHにとおせば、S2Hibernate-JPAを実行できます。SMART
+    Deployの規約を使用する場合は、Seasar2に含まれているconvention.dicon、creator.dicon、customizer.diconをが必要です。Eclipseにインポートして使う場合は、resourcesディレクトリ以下のファイルを自プロジェクトにコピーし、プロジェクトに適した設定に変更し使用してください。<br/>
 </li>
 <li>データベース
 	簡単に機能を試すことができるように、RDBMSとしてHSQLDBを用意しています。lib/hsqldb.jarはHSQLDBを実行する上では必要ですが、本番では必要ありません。
