@@ -62,7 +62,8 @@
 </li>
 <li><a href="#autoDetection">エンティティクラスとマッピングファイルの自動検出</a>
 <ul>
-<li><a href="#autoDetectionSettings">設定</a></li>
+<li><a href="#autoDetectionSettingsEnable">有効化のための設定</a></li>
+<li><a href="#autoDetectionSettingsDisable">無効化のための設定</a></li>
 <li><a href="#autoDetectionCompornents">コンポーネントの概要</a></li>
 </ul>
 </li>
@@ -248,7 +249,7 @@ S2Hibernate-JPAでは、エンティティクラスやマッピングファイ�
 </p>
 
 
-<h4><a name="autoDetectionSettings">設定</a></h4>
+<h4><a name="autoDetectionSettingsEnable">有効化のための設定</a></h4>
 <p>
 自動検出を有効にするには次の設定が必要です。なお、<a href="#diconFile">上記のjpa.dicon</a>ではすでに自動検出に必要な設定がされています。</p>
 <ul>
@@ -264,6 +265,15 @@ S2Hibernate-JPAでは、エンティティクラスやマッピングファイ�
 <p>
     検出の重複を防ぐため、SMART deployの規約に則った自動検出とHibernateの自動検出の併用はできません。SMART deployの規約に則った自動検出を有効にした場合、Hibernateによる自動検出機能は無効になります。
 </p>
+
+<h4><a name="autoDetectionSettingsDisable">無効化のための設定</a></h4>
+<p>
+自動検出を無効にするには次の設定が必要です。
+</p>
+<ul>
+<li>jpa.diconにて自動検出に必要な定義をコメントアウトする</li>
+<li>jdbc.diconにてjdbc-extension.diconのインクルードをコメントアウトする</li>
+</ul>
 
 <h4><a name="autoDetectionCompornents">コンポーネントの概要</a></h4>
 <p>
