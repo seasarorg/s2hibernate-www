@@ -63,6 +63,7 @@
 <li><a href="#autoDetection">エンティティクラスとマッピングファイルの自動検出</a>
 <ul>
 <li><a href="#autoDetectionSettings">設定</a></li>
+<li><a href="#autoDetectionCompornents">コンポーネントの概要</a></li>
 </ul>
 </li>
 <li><a href="#test">効率的なテストの実行方法</a><ul>
@@ -88,34 +89,41 @@
 <h2><a name="Reference">リファレンス</a></h2>
 <h3><a name="Setup">セットアップ</a></h3>
 <ul>
-<li>プロジェクトのインポート
+<li>プロジェクトのインポート<br/>
 	JDK5以上が必要です。<br/>
 	あらかじめ<a href="http://s2container.seasar.org/ja/">Seasar2とS2-Tiger</a>をダウンロードして、EclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br/>
 	S2Hibernate-JPA-x.x.x.zipを解凍してできたs2hibernate-jpaディレクトリをEclipseのJavaプロジェクトとしてワークスペースにインポートしてください。<br/>
 </li>
-<li>必要なjarファイル
+<li>必要なjarファイル<br/>
 	S2Hibernate-JPAとして必要なjarファイルは、s2hibernate-jpa/libにそろってます。この他に<a href="http://s2container.seasar.org/ja/">Seasar2およびS2-Tiger</a>のjarファイルが必要です。<br/>
 	Hibernate3はコネクションプールやキャッシュの実装をいろいろ選べるようになっているので、S2Hibernate-JPAで用意していない実装が必要な場合は、<a href="http://www.hibernate.org/">Hibernateのサイト</a>よりダウンロードしてください。<br/>
 </li>
-<li>クラスパス libのjarファイル(hsqldb.jar以外)とresources(jdbc.dicon、jpa.dicon、log4j.properties、META-INF/persistence.xml)をCLASSPATHにとおせば、S2Hibernate-JPAを実行できます。SMART
-    Deployの規約を使用する場合は、Seasar2に含まれているconvention.dicon、creator.dicon、customizer.diconをが必要です。Eclipseにインポートして使う場合は、resourcesディレクトリ以下のファイルを自プロジェクトにコピーし、プロジェクトに適した設定に変更し使用してください。<br/>
+<li>クラスパス<br/>
+	以下のファイルにクラスパスを通します。resourcesのファイル（特にconvention.diconとjdbc.dicon）はプロジェクトに適した設定に変更し使用してください。
+	<ul>
+	<li>s2hibernate-jpa/libのjarファイル</li>
+	<li>s2hibernate-jpa/resources(jpa.dicon、META-INF/persistence.xml)</li>
+	<li>Seasar2のresources(convention.dicon、creator.dicon、customizer.dicon、jdbc.dicon、log4.properties)</li>
+	</li>
+	</ul>
 </li>
-<li>データベース
-	簡単に機能を試すことができるように、RDBMSとしてHSQLDBを用意しています。lib/hsqldb.jarはHSQLDBを実行する上では必要ですが、本番では必要ありません。
+<li>データベース<br/>
+	簡単に機能を試すことができるように、RDBMSであるHSQLDB(hsqldb.jar)がSeasar2に含まれています。
 </li>
 </ul>
 
 
 <h3><a name="Usage">基本的な使い方</a></h3>
 <p>
-    S2Hibernate-JPAの機能を使用するにあたり、エンティティ、Dao(.java)、persistence.xml、diconファイルの作成が必要になります。
+    S2Hibernate-JPAの機能を使用するにあたり、エンティティ、Dao(.java)、diconファイル、persistence.xmlの作成が必要になります。
 </p>
 
 <h4><a name="Entity">エンティティ</a></h4>
 <p>Persistence APIの仕様に合わせてエンティティを作成します。 
 </p>
 <p>
-SMART deployの規約に則ってエンティティクラスの自動検出を行う場合はエンティティパッケージにエンティティを配置します。SMART deployを使った自動検出の詳細は<a href="#autoDetection">エンティティクラスとマッピングファイルの自動検出</a>を参照してください。</p>
+SMART deployの規約に則ってエンティティクラスの自動検出を行うためにエンティティはエンティティパッケージに配置します。たとえば、convention.diconに設定するルートパッケージ名が「example」の場合、エンティティパッケージは「example.entity」となります。<br/>
+SMART deployを使った自動検出の詳細は<a href="#autoDetection">エンティティクラスとマッピングファイルの自動検出</a>を参照してください。</p>
 
 <h4><a name="dao">Dao(Data Access Object)</a></h4>
 <p>Daoの実装方法</p>
@@ -136,39 +144,43 @@ SMART deployの規約に則ってエンティティクラスの自動検出を�
 
 <h4><a name="diconFile">diconファイル</a></h4>
 <p>
-    jpa.diconを<a href="http://s2container.seasar.org/ja/DIContainer.html#Include">インクルード</a>します。
+    SMART deployに必要なconvention.dicon、creator.dicon、customizer.diconを設定します。設定方法は<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.html#DiconConfSample">diconファイルの設定例</a>を参照してください。
+</p>
+<p>
+    jpa.diconを設定します（以下のjpa.diconはs2hibernate/resourceに含まれるものと同一です）。jpa.diconは任意のdiconファイルやテストクラスで<a href="http://s2container.seasar.org/ja/DIContainer.html#Include">インクルード</a>して利用します。
 </p>
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.3//EN&quot; 
-    &quot;http://www.seasar.org/dtd/components23.dtd&quot;&gt;
+  &quot;http://www.seasar.org/dtd/components23.dtd&quot;&gt;
 &lt;components&gt;
-    &lt;include path=&quot;javaee5.dicon&quot;/&gt;
+  &lt;include path=&quot;javaee5.dicon&quot;/&gt;
 
-    &lt;!-- <b>SMART deploy 利用時は以下のコメントを解除</b>
-    &lt;include path=&quot;convention.dicon&quot;/&gt;
-    &lt;component class=&quot;org.seasar.hibernate.jpa.impl.S2HibernateConfigurationImpl&quot;/&gt;
-    &lt;component class=&quot;org.seasar.framework.jpa.autodetector.PersistenceClassAutoDetector&quot;/&gt;
-    &lt;component class=&quot;org.seasar.framework.jpa.autodetector.MappingFileAutoDetector&quot;/&gt;
-    --&gt;
+  <b>&lt;!-- SMART deploy を利用しない場合は以下をコメントアウトしてください --&gt;</b>
+  &lt;include path=&quot;convention.dicon&quot;/&gt;
+  &lt;component class=&quot;org.seasar.hibernate.jpa.impl.S2HibernateConfigurationImpl&quot;/&gt;
+  &lt;component class=&quot;org.seasar.framework.jpa.autodetector.PersistenceClassAutoDetector&quot;/&gt;
+  &lt;component class=&quot;org.seasar.framework.jpa.autodetector.MappingFileAutoDetector&quot;/&gt;
+  <b>&lt;!-- ここまで SMART deploy 用の設定 --&gt;</b>
 
-    &lt;component class=&quot;org.seasar.hibernate.jpa.impl.S2HibernatePersistenceUnitProvider&quot;/&gt;
-    &lt;component class=&quot;org.seasar.hibernate.jpa.impl.S2HibernateDialect&quot;/&gt;
-    &lt;component class=&quot;org.seasar.hibernate.jpa.metadata.HibernateEntityDescProvider&quot;/&gt;
-    &lt;component class=&quot;org.seasar.hibernate.jpa.unit.HibernateEntityReaderProvider&quot;/&gt;
+  &lt;component class=&quot;org.seasar.hibernate.jpa.impl.S2HibernatePersistenceUnitProvider&quot;/&gt;
+  &lt;component class=&quot;org.seasar.hibernate.jpa.impl.S2HibernateDialect&quot;/&gt;
+  &lt;component class=&quot;org.seasar.hibernate.jpa.metadata.HibernateEntityDescProvider&quot;/&gt;
+  &lt;component class=&quot;org.seasar.hibernate.jpa.unit.HibernateEntityReaderProvider&quot;/&gt;
 
-    &lt;component name=&quot;entityManagerFactory&quot; class=&quot;javax.persistence.EntityManagerFactory&quot;&gt;
-        jpa.persistenceUnitManager.getEntityManagerFactory(<b>&quot;persistenceUnit&quot;</b>)
-    &lt;/component&gt;
+  &lt;component name=&quot;entityManagerFactory&quot; 
+    class=&quot;javax.persistence.EntityManagerFactory&quot;&gt;
+    jpa.persistenceUnitManager.getEntityManagerFactory(&quot;<b>persistenceUnit</b>&quot;)
+  &lt;/component&gt;
 
-    &lt;component name=&quot;entityManager&quot; 
-        class=&quot;org.seasar.framework.jpa.impl.TxScopedEntityManagerProxy&quot;/&gt;
+  &lt;component name=&quot;entityManager&quot; 
+    class=&quot;org.seasar.framework.jpa.impl.TxScopedEntityManagerProxy&quot;/&gt;
 
-    &lt;!-- for test --&gt;
-    <b>&lt;component name=&quot;dataSourceProxy&quot; 
-        class=&quot;org.seasar.extension.datasource.impl.SingletonDataSourceProxy&quot;/&gt;</b>
+  &lt;!-- for test --&gt;
+  <b>&lt;component name=&quot;dataSourceProxy&quot; 
+    class=&quot;org.seasar.extension.datasource.impl.SingletonDataSourceProxy&quot;/&gt;</b>
 &lt;/components&gt;</pre>
 <p>
-SMART deployの利用によりエンティティクラスとマッピングファイルを自動検出する場合はコメントを解除してください。
+SMART deployを利用しない場合は設定の一部をコメントアウトしてください。
 </p>
 <p>
 jpa.persistenceUnitManager.getEntityManagerFactory()に渡す永続ユニット名はpersistence.xmlの定義と一致させてください。
@@ -223,24 +235,25 @@ SMART deployによる自動検出ではなく、Hibernateに備わる自動検�
 
 <h3><a name="autoDetection">エンティティクラスとマッピングファイルの自動検出</a></h3>
 <p>
-Hibernateにはエンティティクラスとマッピングファイルを自動検出する機能がありますが以下のような制限があります。
+Hibernateにはエンティティクラスとマッピングファイルを自動検出する機能がありますが、以下のような制限があります。
 </p>
 <ul>
 <li>通常は、クラスパス上のpersistence.xmlと同一のディレクトリまたはjarにあるエンティティクラスしか検出できない。特定のjarファイルからエンティティクラスを検出することもができるが、それにはpersistence.xmlのjar-file要素にjarファイルの指定が必要になる。</li>
 <li>通常は、クラスパス上のpersistence.xmlと同一のディレクトリまたはjarにある標準のマッピングファイル（META-INF/orm.xml）とHibernate固有のマッピングファイル(hbm.xml)しか検出できない。特定のjarファイルからHibernate固有のマッピングファイル(hbm.xml)を検出することもできるが、それにはpersistence.xmlのjar-file要素にjarファイルの指定が必要になる。</li>
 </ul>
 <p>
-S2Hibernate-JPAではエンティティクラスやマッピングファイルがpersistence.xmlと同一のディレクトリまたはjarに存在するかしないかに関係なく、クラスパス上にありさえすれば<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.html">SMART deploy</a>の規約に則ってそれらを自動検出できます。また、マッピングファイルについては標準のマッピングファイル（META-INF/orm.xml）以外のマッピングファイルも自動検出できます。
-jarファイルからエンティティクラスやマッピングファイルを検出する場合でもpersistence.xmlのjar-file要素にjarファイルの指定は不要です。
+S2Hibernate-JPAでは、エンティティクラスやマッピングファイルがpersistence.xmlと同一のディレクトリまたはjarに存在するかしないかに関係なく、クラスパス上にありさえすれば<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.html">SMART deploy</a>の規約に則ってそれらを自動検出します。
+また、マッピングファイルについては標準のマッピングファイル（META-INF/orm.xml）以外のマッピングファイルも自動検出できます。
+したがって、persistence.xmlのmapping-file要素、jar-file要素、class要素は特別な理由がない限り使用する必要がなくなります。
 </p>
 
 
 <h4><a name="autoDetectionSettings">設定</a></h4>
 <p>
-SMART deployの規約に則った自動検出を有効にするには次の設定を行います。</p>
+自動検出を有効にするには次の設定が必要です。なお、<a href="#diconFile">上記のjpa.dicon</a>ではすでに自動検出に必要な設定がされています。</p>
 <ul>
-<li>convention.diconの用意などSMART deployに必要な設定を行う</li>
-<li>jpa.diconにてconvention.diconをインクルードし次のコンポーネントを定義する（すなわち、<a href="#diconFile">diconファイル</a>に示したjpa.diconのコメントを外す）
+<li>SMART deploy</a>の設定(convention.dicon、creator.dicon、customizer.diconの設定など)</li>
+<li>jpa.diconの設定(convention.diconのインクルードと以下のコンポーネントの定義)
 <ul>
 <li><code>org.seasar.framework.jpa.autodetector.PersistenceClassAutoDetector</code></li>
 <li><code>org.seasar.framework.jpa.autodetector.MappingFileAutoDetector</code></li>
@@ -249,17 +262,23 @@ SMART deployの規約に則った自動検出を有効にするには次の設�
 </li>
 </ul>
 <p>
-    検出の重複を防ぐため、SMART deployの規約に則った自動検出を有効にした場合、Hibernateの自動検出機能は無効となります。
+    検出の重複を防ぐため、SMART deployの規約に則った自動検出とHibernateの自動検出の併用はできません。SMART deployの規約に則った自動検出を有効にした場合、Hibernateによる自動検出機能は無効になります。
+</p>
+
+<h4><a name="autoDetectionCompornents">コンポーネントの概要</a></h4>
+<p>
+	自動検出に必要なコンポーネントの概要を説明します。
 </p>
 <p>
-    以下、自動検出に必要なコンポーネントの概要を説明します。
+	説明の中で「エンティティパッケージ」という用語を使いますが、エンティティパッケージとはconvention.diconに指定したルートパッケージの直下の個別パッケージ名が「entity」であるパッケージのことです。
+	たとえば、ルートパッケージ名が「example」の場合、エンティティパッケージは「example.entity」となります。
 </p>
 <dl>
 <dt style="text-indent: 1em;"><b>org.seasar.framework.jpa.autodetector.PersistenceClassAutoDetector</b></dt>
 <dd>
-    エンティティパッケージ以下のエンティティクラスを自動検出します。エンティティパッケージとはconvention.diconに指定したルートパッケージの直下の個別パッケージ名がentityであるパッケージです。</dd><dt style="text-indent: 1em"><b>org.seasar.framework.jpa.autodetector.MappingFileAutoDetector </b></dt>
+    エンティティパッケージ以下のエンティティクラスを自動検出します。</dd><dt style="text-indent: 1em"><b>org.seasar.framework.jpa.autodetector.MappingFileAutoDetector </b></dt>
 <dd>
-    META-INFディレクトリ以下とエンティティパッケージ以下のxxxOrm.xml(xxxは任意の値)という名称のマッピングファイルを自動検出します。エンティティパッケージとはconvention.diconに指定したルートパッケージの直下の個別パッケージ名がentityであるパッケージです。ここでのマッピングファイルとはJPAのマッピングファイルです。Hibernate固有のマッピングファイル（hbm.xml）ではありません。</dd><dt style="text-indent: 1em"><b>org.seasar.hibernate.jpa.impl.S2HibernateConfigurationImpl</b></dt>
+    META-INFディレクトリ以下とエンティティパッケージ以下のxxxOrm.xml(xxxは任意の値)という名称のマッピングファイルを自動検出します。ここでのマッピングファイルとはJPAのマッピングファイルです。Hibernate固有のマッピングファイル（hbm.xml）ではありません。</dd><dt style="text-indent: 1em"><b>org.seasar.hibernate.jpa.impl.S2HibernateConfigurationImpl</b></dt>
 <dd>
     エンティティクラスやマッピングファイルに関する設定情報です。ここに指定されたエンティティクラスやマッピングファイルはEntityManagerFactoryの初期化前にHibernateの永続ユニットに登録されます。複数のPersistenceClassAutoDetectorとMappingFileAutoDetectorが<a href="http://s2container.seasar.org/ja/DIContainer.html#AutoBindingMode">自動バインディング</a>されます。自動バインディングされたPersistenceClassAutoDetectorとMappingFileAutoDetectorによって検出されたエンティティクラスやマッピングファイルはすべての永続ユニットに登録されます。特定の永続ユニットに対してのみ登録したい場合は、永続ユニットを指定してPersistenceClassAutoDetectorとMappingFileAutoDetectorを明示的にインジェクションしてください。<br/>
     このコンポーネントには特定のエンティティクラスとマッピングファイルを直接登録することもできます。</dd></dl>
@@ -267,11 +286,11 @@ SMART deployの規約に則った自動検出を有効にするには次の設�
 <h3><a name="test">効率的なテストの実行方法</a></h3>
 <p>
     Hibernate EntityManagerを利用したテストを実行すると、テストケース毎にEntitiyMnanagerFactoryが初期化されるためテストケースが多いと時間がかかります。これを避けるため、S2Hibernate-JPAではEntitiyMnanagerFactoryをキャッシュしテストケース間で共有する仕組みを提供します。
-    このキャッシュを有効にするためにはenv.txtの設定とpersistence.xmlの設定が必要です。</p>
+    このキャッシュを有効にするためにはenv.txtの設定とpersistence.xmlの設定が必要です。設定が正しく行われたかどうかはテストケース毎のログ出力から確認できます。</p>
 
 <h4><a name="env.txt">env.txt</a></h4>
 <p>
-    <span style="font-family: Courier New">env.txt</span>ファイルをクラスパス上に配置します。<span style="font-family: Courier New">env.txtにはutから始まる任意の名称を記述してください。</span>
+    env.txtファイルをクラスパス上に配置します。env.txtにはutから始まる任意の名称を記述してください。たとえば、「ut」や「ut-hoge」などです。
 </p>
 
 <h4><a name="testPersistence.xml">テスト用のpersistence.xml</a></h4>
