@@ -195,7 +195,7 @@ jpa.persistenceUnitManager.getEntityManagerFactory()に渡す永続ユニット�
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;persistence&gt;
     &lt;persistence-unit name=&quot;<b>persistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
-        &lt;jta-data-source><b>jdbc/DataSource</b>&lt;/jta-data-source&gt;
+        &lt;jta-data-source><b>jdbc/dataSource</b>&lt;/jta-data-source&gt;
         &lt;provider&gt;org.hibernate.ejb.HibernatePersistence&lt;/provider&gt;
         &lt;properties&gt;
             &lt;property name=&quot;hibernate.dialect&quot; 
@@ -215,7 +215,7 @@ jpa.persistenceUnitManager.getEntityManagerFactory()に渡す永続ユニット�
 &lt;/persistence&gt;
 </pre>
 <p>
-データソース名は、jdbc.diconの<var>名前空間名.DataSourceコンポーネント名</var>と一致させてください。
+データソース名は、jdbc.diconの<var>名前空間名.dataSourceコンポーネント名</var>と一致させてください。
 </p>
 <p>
 SMART deployによる自動検出ではなく、Hibernateに備わる自動検出機能を使用する場合、persistence.xmlとエンティティクラスはクラスパス上の同一のディレクトリまたはJarファイルに配置する必要があります。
