@@ -213,13 +213,13 @@ jpa.persistenceUnitManager.getEntityManagerFactory()に渡す永続ユニット�
 データソース名は、jdbc.diconの<var>名前空間名.dataSourceコンポーネント名</var>と一致させてください。 ここではjdbc/dataSourceと指定しています。
 </p>
 
-<h3>永続<a name="autoDetectionAndAutoRegister">クラスとマッピングファイルの自動検出/自動登録</a></h3>
+<h3><a name="autoDetectionAndAutoRegister">永続クラスとマッピングファイルの自動検出/自動登録</a></h3>
 <p>
 S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.html">SMART deploy</a>を利用することでエンティティパッケージに置かれた永続クラスやマッピングファイルを自動検出し永続ユニットに自動登録できます。
 </p>
 <p>
-「エンティティパッケージ」とはconvention.diconに指定したルートパッケージの直下の個別パッケージ名が「entity」であるパッケージのことです。たとえば、ルートパッケージ名が「example」の場合、エンティティパッケージは「example.entity」となります。
-「永続クラス」とはEntityアノテーション、Embeddableアノテーション、Mappedsuperclassアノテーションのいずれかが付与されたクラスを指します。「マッピングファイル」とはJPAのマッピングファイルを意味します。
+「エンティティパッケージ」とは<code>convention.dicon</code>に指定したルートパッケージの直下の個別パッケージ名が「<code>entity</code>」であるパッケージのことです。たとえば、ルートパッケージ名が「<code>example</code>」の場合、エンティティパッケージは「<code>example.entity</code>」となります。
+「永続クラス」とは<code>Entity</code>アノテーション、<code>Embeddable</code>アノテーション、<code>MappedSuperclass</code>アノテーションのいずれかが付与されたクラスを指します。「マッピングファイル」とはJPAのマッピングファイルを意味します。
 </p>
 
 <h4><a name="autoDetection">自動検出</a></h4>
@@ -236,22 +236,22 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
 <ul>
 <li>SMART deployが有効である </li>
 <li>マッピングファイルがエンティティパッケージまたはエンティティパッケージのサブパッケージに存在する </li>
-<li>マッピングファイルの名称がXxxOrm.xml(Xxxは任意の名称)である </li>
+<li>マッピングファイルの名称が<code><var>Xxx</var>Orm.xml</code>(<coe><var>Xxx</var></code>は任意の名称)である </li>
 </ul>
     <p>
-        SMART deployが有効である場合、S2Hibernate-JPAはS2Hibernate-JPAによる自動検出を優先し、Hibernateの自動検出機能を無効にします。したがって、Hibernateの独自マッピングファイル（.hbm.xml）は自動検出されません。</p>
+        SMART deployが有効である場合、S2Hibernate-JPAはS2Hibernate-JPAによる自動検出を優先し、Hibernateの自動検出機能を無効にします。したがって、Hibernateの独自マッピングファイル（<code>.hbm.xml</code>）は自動検出されません。</p>
     <p>
-        なお、JPA標準のマッピングファイルであるorm.xmlは、SMART deployの有効/無効にかかわらずHibernate EntityManagerにより自動的に読み込まれます。</p>
+        なお、JPA標準のマッピングファイルである<code>META-INF/orm.xml</code>は、SMART deployの有効/無効にかかわらずHibernate EntityManagerにより自動的に読み込まれます。</p>
     
 <h4>永続ユニットごとの自動登録</h4>
 <p>
     自動検出されたエンティティクラスとマッピングファイルは以下の規則により特定の永続ユニットに登録されます。この規則は複数の永続ユニットを同時に利用する場合に特に重要です。複数の永続ユニットを使う場合の設定については<a href="#multiple">複数の永続ユニットの使い方</a>を参照してください。</p>
     <p>
-        永続クラスもしくはマッピングファイルがエンティティパッケージ直下に置かれている場合、それらはデフォルトの永続ユニット（persistenceUnit）に登録されます。</p>
+        永続クラスもしくはマッピングファイルがエンティティパッケージ直下に置かれている場合、それらはデフォルトの永続ユニット（<code>persistenceUnit</code>）に登録されます。</p>
     <p>
-        永続クラスもしくはマッピングファイルがエンティティパッケージのサブパッケージに置かれている場合、それらは<var>サブパッケージ名+PersistenceUnit</var>という名前の永続ユニットに登録されます。</p>
+        永続クラスもしくはマッピングファイルがエンティティパッケージのサブパッケージに置かれている場合、それらは<code><var>xxx</var>PersistenceUnit</code>(<code><var>xxx</var></code>はサブパッケージ名)という名前の永続ユニットに登録されます。</p>
     <p>
-        なお、JPA標準のマッピングファイルであるorm.xmlは、Hibernate EntityManagerによりすべての永続ユニットに自動的に登録されます。<br />
+        なお、JPA標準のマッピングファイルである<code>META-INF/orm.xml</code>は、Hibernate EntityManagerによりすべての永続ユニットに自動的に登録されます。<br />
     </p>    
 <h5><a name="autoRegister">自動登録の例</a></h5>
 <p>
@@ -268,12 +268,12 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
 <tr><td align="center" style="width: 266px; height: 24px;">
     example.entity.Hoge</td><td align="center" style="width: 182px; height: 24px;">
     persistenceUnit</td><td style="width: 273px; height: 24px;">
-        デフォルトの永続ユニットである「persistenceUnit」に登録されます。</td>
+        デフォルトの永続ユニットである「<code>persistenceUnit</code>」に登録されます。</td>
 </tr>
 <tr><td align="center" style="width: 266px">
     example.entity.foo.Bar</td><td align="center" style="width: 182px">
     fooPeristenceUnit</td><td style="width: 273px">
-        サブパッケージ「foo」とサフィックス「PersistenceUnit」を組み合わせた名称を持つ永続ユニット「fooPersistenceUnit」に登録されます。</td>
+        サブパッケージ「<code>foo</code>」とサフィックス「<code>PersistenceUnit</code>」を組み合わせた名称を持つ永続ユニット「<code>fooPersistenceUnit</code>」に登録されます。</td>
 </tr>
 
 </tbody></table>
@@ -281,26 +281,39 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
 <h3><a name="multiple">複数の永続ユニットの使い方</a></h3>
 
 <p>
-複数のJPA実装を使う場合や、複数のJDBC DataSourceを使う場合は、複数の永続ユニットを作成します。そして、それぞれの永続ユニットに対応するjpa.diconのコピーを用意し、jpa.diconからインクルードします。
+複数のJPA実装を使う場合や、複数のJDBC DataSourceを使う場合は、複数の永続ユニットを作成します。そして、それぞれの永続ユニットに対応する<code>jpa.dicon</code>のコピーを用意し、<code>jpa.dicon</code>からインクルードします。
 </p>
 <ul>
-<li>persistence.xmlに複数の永続ユニットを定義します。
+<li><code>persistence.xml</code>に複数の永続ユニットを定義します。
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;persistence&gt;
+    &lt;persistence-unit name=&quot;<b>persistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
+        &lt;jta-data-source><b>jdbc/dataSource</b>&lt;/jta-data-source&gt;
+    ．．．
+    &lt;/persistence-unit&gt;
     &lt;persistence-unit name=&quot;<b>fooPersistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
         &lt;jta-data-source><b>jdbc/fooDataSource</b>&lt;/jta-data-source&gt;
     ．．．
-    &lt;/persistence-unit&gt;
-    &lt;persistence-unit name=&quot;<b>barPersistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
-        &lt;jta-data-source><b>jdbc/barDataSource</b>&lt;/jta-data-source&gt;
-    ．．．
     &lt;/persistence-unit&gt;</pre>
 </li>
-<li>foo-jpa.diconを定義します。jpa.diconをコピーし、次のようにします。
+<li><code>em.dicon</code>を定義します。<code>jpa.dicon</code>をコピーし、次のようにします。
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN" 
     "http://www.seasar.org/dtd/components24.dtd"&gt;
-&lt;components namespace=&quot;<b>fooJPA</b>&quot;&gt;
+&lt;components&gt;
+    ．．．
+    &lt;component name=&quot;entityManagerFactory&quot; class=&quot;javax.persistence.EntityManagerFactory&quot;&gt;
+        jpa.persistenceUnitManager.getEntityManagerFactory(&quot;persistenceUnit&quot;)
+    &lt;/component&gt;
+
+    &lt;component name=&quot;entityManager&quot; 
+        class=&quot;org.seasar.framework.jpa.TxScopedEntityManagerProxy&quot;/&gt;</pre>
+</li>
+<li><code>foo-em.dicon</code>を定義します。<code>jpa.dicon</code>をコピーし、次のようにします。
+<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN" 
+    "http://www.seasar.org/dtd/components24.dtd"&gt;
+&lt;components&gt;
     ．．．
     &lt;component name=&quot;<b>fooEntityManagerFactory</b>&quot; class=&quot;javax.persistence.EntityManagerFactory&quot;&gt;
         jpa.persistenceUnitManager.getEntityManagerFactory(&quot;<b>fooPersistenceUnit</b>&quot;)
@@ -309,26 +322,13 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
     &lt;component name=&quot;<b>fooEntityManager</b>&quot; 
         class=&quot;org.seasar.framework.jpa.TxScopedEntityManagerProxy&quot;/&gt;</pre>
 </li>
-<li>bar-jpa.diconを定義します。jpa.diconをコピーし、次のようにします。
-<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN" 
-    "http://www.seasar.org/dtd/components24.dtd"&gt;
-&lt;components namespace=&quot;<b>barJPA</b>&quot;&gt;
-    ．．．
-    &lt;component name=&quot;<b>barEntityManagerFactory</b>&quot; class=&quot;javax.persistence.EntityManagerFactory&quot;&gt;
-        jpa.persistenceUnitManager.getEntityManagerFactory(&quot;<b>barPersistenceUnit</b>&quot;)
-    &lt;/component&gt;
-
-    &lt;component name=&quot;<b>barEntityManager</b>&quot; 
-        class=&quot;org.seasar.framework.jpa.TxScopedEntityManagerProxy&quot;/&gt;</pre>
-</li>
-<li>jpa.diconを書き換えfoo-jpa.diconとbar-jpa.diconをインクルードします。
+<li>jpa.diconを書き換え<code>em.dicon</code>と<code>foo-em.diconをインクルードします。
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN" 
     "http://www.seasar.org/dtd/components24.dtd"&gt;
 &lt;components&gt;
-  &lt;include path="<b>foo-jpa.dicon</b>"/&gt;
-  &lt;include path="<b>bar-jpa.dicon</b>"/&gt;
+  &lt;include path="<b>em.dicon</b>"/&gt;
+  &lt;include path="<b>foo-em.dicon</b>"/&gt;
 &lt;/components&gt;</pre>
 </li>
 <li>エンティティマネジャーを使用するDaoのクラスはプロパティでオブジェクトを受け取ります。プロパティ名には使用したいエンティティマネージャーのコンポーネント名を使用してください。
