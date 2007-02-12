@@ -296,7 +296,7 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
     ．．．
     &lt;/persistence-unit&gt;</pre>
 </li>
-<li><code>em.dicon</code>を定義します。<code>jpa.dicon</code>をコピーし、次のようにします。
+<li><code>pu.dicon</code>を定義します。<code>jpa.dicon</code>をコピーし、次のようにします。
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN" 
     "http://www.seasar.org/dtd/components24.dtd"&gt;
@@ -309,7 +309,7 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
     &lt;component name=&quot;entityManager&quot; 
         class=&quot;org.seasar.framework.jpa.TxScopedEntityManagerProxy&quot;/&gt;</pre>
 </li>
-<li><code>foo-em.dicon</code>を定義します。<code>jpa.dicon</code>をコピーし、次のようにします。
+<li><code>foo-pu.dicon</code>を定義します。<code>jpa.dicon</code>をコピーし、次のようにします。
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN" 
     "http://www.seasar.org/dtd/components24.dtd"&gt;
@@ -322,13 +322,13 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
     &lt;component name=&quot;<b>fooEntityManager</b>&quot; 
         class=&quot;org.seasar.framework.jpa.TxScopedEntityManagerProxy&quot;/&gt;</pre>
 </li>
-<li>jpa.diconを書き換え<code>em.dicon</code>と<code>foo-em.diconをインクルードします。
+<li>jpa.diconを書き換え<code>pu.dicon</code>と<code>foo-pu.diconをインクルードします。
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN" 
     "http://www.seasar.org/dtd/components24.dtd"&gt;
 &lt;components&gt;
-  &lt;include path="<b>em.dicon</b>"/&gt;
-  &lt;include path="<b>foo-em.dicon</b>"/&gt;
+  &lt;include path="<b>pu.dicon</b>"/&gt;
+  &lt;include path="<b>foo-pu.dicon</b>"/&gt;
 &lt;/components&gt;</pre>
 </li>
 <li>エンティティマネジャーを使用するDaoのクラスはプロパティでオブジェクトを受け取ります。プロパティ名には使用したいエンティティマネージャーのコンポーネント名を使用してください。
