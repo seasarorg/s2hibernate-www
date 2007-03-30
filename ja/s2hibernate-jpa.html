@@ -50,6 +50,7 @@
 <ul>	
 <li><a href="#Overview">概要</a></li>
 <li><a href="#Reference">リファレンス</a>
+</li>
 <ul>
 <li><a href="#Setup">セットアップ</a></li>
 <li><a href="#Usage">基本的な使い方</a>
@@ -67,18 +68,13 @@
 </ul>
 </li>
 <li><a href="#multiple">複数の永続ユニットの使い方</a></li>
-<li><a href="#test">効率的なテストの実行方法</a><ul>
-<li><a href="#env.txt">env.txt</a></li>
-<li><a href="#testPersistence.xml">テスト用のpersistence.xml</a></li>
-</ul>
-</li>
+<li><a href="#test">EntitiyMnanagerFactoryをキャッシュした効率の良いテスト</a></li>
 <li><a href="#mappingTest">S2JUnit4を使った複雑なマッピングのテスト</a>
 <ul>
 <li><a href="#mappingTestSample">サンプルコード</a></li>
 </ul>
 </li>
 </ul>
-</li>
 </ul>
 
 <h2><a name="Overview">概要</a></h2>
@@ -171,7 +167,6 @@ private EntityManager entityManager;</pre>
 
   &lt;component class=&quot;org.seasar.hibernate.jpa.metadata.HibernateEntityDescProvider&quot;/&gt;
 
-  &lt;!-- for test --&gt;
   &lt;component name=&quot;<b>dataSourceProxy</b>&quot; 
       class=&quot;org.seasar.extension.datasource.impl.SingletonDataSourceProxy&quot;/&gt;
 &lt;/components&gt;
@@ -181,22 +176,22 @@ private EntityManager entityManager;</pre>
 jpa.persistenceUnitManager.getEntityManagerFactory()に渡す永続ユニット名はpersistence.xmlの定義と一致させてください。
 </p>
 <p>
-    dataSourceProxyはテスト用のコンポーネントです。 このコンポーネントについては<a href="#test">効率的なテストの実行方法</a>にて説明します。</p>
+    データソースのコンポーネント名はpersistence.xmlのデータソース名の定義と一致させてください。</p>
 
 <h4><a name="persistence.xml">persistence.xml</a></h4>
 <p>クラスパスの通っているディレクトリにMETA-INFディレクトリを作成します。META-INFには、次のようなpersistence.xmlを格納します。</p>
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;persistence&gt;
     &lt;persistence-unit name=&quot;<b>persistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
-        &lt;jta-data-source><b>jdbc/dataSource</b>&lt;/jta-data-source&gt;
+        &lt;jta-data-source><strong>dataSourceProxy</strong>&lt;/jta-data-source&gt;
         &lt;provider&gt;org.hibernate.ejb.HibernatePersistence&lt;/provider&gt;
         &lt;properties&gt;
-            &lt;property name=&quot;hibernate.dialect&quot; 
-                value=&quot;org.hibernate.dialect.HSQLDialect&quot;/&gt;
-            &lt;property name=&quot;hibernate.jndi.class&quot; 
-                value=&quot;org.seasar.extension.j2ee.JndiContextFactory&quot;/&gt;
-            &lt;property name=&quot;hibernate.transaction.manager_lookup_class&quot; 
-                value=&quot;org.seasar.hibernate.jpa.transaction.S2TransactionManagerLookup&quot;/&gt;
+            &lt;property name="hibernate.dialect" 
+                value="org.hibernate.dialect.HSQLDialect"/&gt;
+            &lt;property name="hibernate.jndi.class" 
+                value="org.seasar.extension.j2ee.JndiContextFactory"/&gt;
+            &lt;property name="hibernate.transaction.manager_lookup_class" 
+                value="org.seasar.hibernate.jpa.transaction.SingletonTransactionManagerProxyLookup"/&gt;
             &lt;property name=&quot;hibernate.show_sql&quot; 
                 value=&quot;false&quot;/&gt;
             &lt;property name=&quot;hibernate.format_sql&quot; 
@@ -210,7 +205,7 @@ jpa.persistenceUnitManager.getEntityManagerFactory()に渡す永続ユニット�
 <p>
     永続ユニット名にはpersistenceUnitと指定します。</p>
 <p>
-データソース名は、jdbc.diconの<var>名前空間名.dataSourceコンポーネント名</var>と一致させてください。 ここではjdbc/dataSourceと指定しています。
+    データソース名には、使用するデータソースのコンポーネント名を指定します。
 </p>
 
 <h3><a name="autoDetectionAndAutoRegister">永続クラスとマッピングファイルの自動検出/自動登録</a></h3>
@@ -236,7 +231,7 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
 <ul>
 <li>SMART deployが有効である </li>
 <li>マッピングファイルがエンティティパッケージまたはエンティティパッケージのサブパッケージに存在する </li>
-<li>マッピングファイルの名称が<code><var>Xxx</var>Orm.xml</code>(<coe><var>Xxx</var></code>は任意の名称)である </li>
+<li>マッピングファイルの名称が<code><var>Xxx</var>Orm.xml</code>(<code><var>Xxx</var></code>は任意の名称)である </li>
 </ul>
     <p>
         SMART deployが有効である場合、S2Hibernate-JPAはS2Hibernate-JPAによる自動検出を優先し、Hibernateの自動検出機能を無効にします。したがって、Hibernateの独自マッピングファイル（<code>.hbm.xml</code>）は自動検出されません。</p>
@@ -288,11 +283,11 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;persistence&gt;
     &lt;persistence-unit name=&quot;<b>persistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
-        &lt;jta-data-source><b>jdbc/dataSource</b>&lt;/jta-data-source&gt;
+        &lt;jta-data-source><b>dataSourceProxy</b>&lt;/jta-data-source&gt;
     ．．．
     &lt;/persistence-unit&gt;
     &lt;persistence-unit name=&quot;<b>fooPersistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
-        &lt;jta-data-source><b>jdbc/fooDataSource</b>&lt;/jta-data-source&gt;
+        &lt;jta-data-source><strong>dataSourceProxy</strong>&lt;/jta-data-source&gt;
     ．．．
     &lt;/persistence-unit&gt;</pre>
 </li>
@@ -322,7 +317,7 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
     &lt;component name=&quot;<b>fooEntityManager</b>&quot; 
         class=&quot;org.seasar.framework.jpa.TxScopedEntityManagerProxy&quot;/&gt;</pre>
 </li>
-<li>jpa.diconを書き換え<code>pu.dicon</code>と<code>foo-pu.diconをインクルードします。
+<li>jpa.diconを書き換え<code>pu.dicon</code>と<code>foo-pu.dicon</code>をインクルードします。
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN" 
     "http://www.seasar.org/dtd/components24.dtd"&gt;
@@ -340,47 +335,14 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
 private EntityManager em</pre>
 </li>
 </ul>
-<h3><a name="test">効率的なテストの実行方法</a></h3>
+<h3><a name="test">EntitiyMnanagerFactoryをキャッシュした効率の良いテスト</a></h3>
 <p>
-    Hibernate EntityManagerを利用したテストを実行すると、テストケース毎にEntitiyMnanagerFactoryが初期化されるためテストケースが多いと時間がかかります。これを避けるため、S2Hibernate-JPAではEntitiyMnanagerFactoryをキャッシュしテストケース間で共有する仕組みを提供します。
-    このキャッシュを有効にするためにはenv.txtの設定とpersistence.xmlの設定が必要です。設定が正しく行われたかどうかはテストケース毎のログ出力から確認できます。</p>
+    Hibernate EntityManagerを利用したテストではテストケース毎にEntitiyMnanagerFactoryが初期化されるため、テストケースが多い場合には時間がかかります。これを避けるため、Seasar2はテストがS2JUnitやS2JUnit4で実行される場合にEntitiyMnanagerFactoryをキャッシュし、複数のテストケース間で共有する仕組みを提供します。
+</p> 
+<p>   S2JUnitやS2JUnit4またはそれらの派生クラスでテストが実行される限り、この仕組みはデフォルトで有効です。</p>
 
-<h4><a name="env.txt">env.txt</a></h4>
-<p>
-    env.txtファイルをクラスパス上に配置します。env.txtにはutから始まる任意の名称を記述してください。たとえば、「ut」や「ut-hoge」などです。
-</p>
-
-<h4><a name="testPersistence.xml">テスト用のpersistence.xml</a></h4>
-<p>
-    キャッシュされたEntitiyMnanagerFactoryからS2Containerに管理されたDataSourceやTransactionManagerに適切にアクセスできるようにテスト用のpersistence.xmlを使用します。</p>
-<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;persistence&gt;
-    &lt;persistence-unit name=&quot;persistenceUnit&quot; transaction-type=&quot;JTA&quot;&gt;
-        &lt;jta-data-source&gt;<b>dataSourceProxy</b>&lt;/jta-data-source&gt;
-        &lt;provider&gt;org.hibernate.ejb.HibernatePersistence&lt;/provider&gt;
-        &lt;properties&gt;
-            &lt;property name=&quot;hibernate.dialect&quot; 
-                value=&quot;org.hibernate.dialect.HSQLDialect&quot;/&gt;
-            &lt;property name=&quot;hibernate.jndi.class&quot; 
-                value=&quot;org.seasar.extension.j2ee.JndiContextFactory&quot;/&gt;
-            &lt;property name=&quot;hibernate.transaction.manager_lookup_class&quot; 
-                value=&quot;<b>org.seasar.hibernate.jpa.transaction.S2TransactionManagerLookupTest</b>&quot;/&gt;
-            &lt;property name=&quot;hibernate.show_sql&quot; 
-                value=&quot;false&quot;/&gt;
-            &lt;property name=&quot;hibernate.format_sql&quot; 
-                value=&quot;true&quot;/&gt;
-            &lt;property name=&quot;hibernate.use_sql_comments&quot; 
-                value=&quot;false&quot;/&gt;
-        &lt;/properties&gt;
-    &lt;/persistence-unit&gt;
-&lt;/persistence&gt;
-</pre>
-<p>
-データソース名にはjpa.diconに定義された<code>org.seasar.extension.datasource.impl.SingletonDataSourceProxy</code>のコンポーネント名を指定してください。
-</p>
-<p>
-hibernate.transaction.manager_lookup_classプロパティには<code>org.seasar.hibernate.jpa.transaction.S2TransactionManagerLookupTest</code>を指定してください。
-</p>
+<p>    
+    キャッシュ機能を無効にしたい場合には、env_ut.txtというファイルをクラスパスに通し、ファイルに「ut」以外の文字で始まる環境名を記述してください。</p>
 <h3><a name="mappingTest">S2JUnit4を使った複雑なマッピングのテスト</a></h3>
 <p>
     JPAではさまざまなマッピング方法がサポートされていますが、継承を使ったマッピングなどは意図通りにマッピングできたかテストするのが難しいことがあります。<a href="http://s2container.seasar.org/ja/S2JUnit4.html">S2JUnit4</a>を利用すると、エンティティを表形式(Seasar2のDataSet)に変換でき、Excelで用意した期待値と比較可能なのでテストが容易です。</p>
