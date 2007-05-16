@@ -147,47 +147,54 @@ private EntityManager entityManager;</pre>
 
 <h4><a name="diconFile">diconファイル</a></h4>
 <p>
-    SMART deployに必要なconvention.dicon、creator.dicon、customizer.diconを設定します。設定方法は<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.html#DiconConfSample">diconファイルの設定例</a>を参照してください。
+    まず、SMART deployに必要なconvention.dicon、creator.dicon、customizer.diconを設定します。設定方法は<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.html#DiconConfSample">diconファイルの設定例</a>を参照してください。
 </p>
 <p>
-    jpa.diconを設定します（以下のjpa.diconはs2hibernate-jpa/resourcesに含まれるものと同一です）。jpa.diconは他のdiconファイルやテストクラスで<a href="http://s2container.seasar.org/ja/DIContainer.html#Include">インクルード</a>して利用します。
+    次に、jpa.diconを設定します（以下のjpa.diconはs2hibernate-jpa/resourcesに含まれるものと同一です）。
 </p>
-<pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;!DOCTYPE components PUBLIC &quot;-//SEASAR//DTD S2Container 2.4//EN&quot; 
-  &quot;http://www.seasar.org/dtd/components24.dtd&quot;&gt;
-&lt;components&gt;
+<pre>&lt;components&gt;
   &lt;include path=&quot;s2hibernate-jpa.dicon&quot;/&gt;
 
-  &lt;component name=&quot;entityManagerFactory&quot; class=&quot;javax.persistence.EntityManagerFactory&quot;&gt;
-    jpa.persistenceUnitManager.getEntityManagerFactory(&quot;<b>persistenceUnit</b>&quot;)
+  &lt;component name=&quot;persistenceUnitProvider&quot; 
+    class=&quot;org.seasar.framework.jpa.impl.ContainerPersistenceUnitProvider&quot;&gt;
+    &lt;property name=&quot;unitName&quot;&gt;&quot;<b>persistenceUnit</b>&quot;&lt;/property&gt;
   &lt;/component&gt;
 
-  &lt;component name=&quot;entityManager&quot; 
-      class=&quot;org.seasar.framework.jpa.impl.TxScopedEntityManagerProxy&quot;/&gt;
+  &lt;component name=&quot;entityManagerFactory&quot; class=&quot;javax.persistence.EntityManagerFactory&quot;&gt;
+    persistenceUnitProvider.entityManagerFactory
+  &lt;/component&gt;
 
-  &lt;component class=&quot;org.seasar.hibernate.jpa.metadata.HibernateEntityDescProvider&quot;/&gt;
-
-  &lt;component name=&quot;<b>dataSourceProxy</b>&quot; 
-      class=&quot;org.seasar.extension.datasource.impl.SingletonDataSourceProxy&quot;/&gt;
+  &lt;component name=&quot;entityManager&quot; class=&quot;org.seasar.framework.jpa.impl.TxScopedEntityManagerProxy&quot;/&gt;
 &lt;/components&gt;
 </pre>
 
 <p>
-jpa.persistenceUnitManager.getEntityManagerFactory()に渡す永続ユニット名はpersistence.xmlの定義と一致させてください。
+persistenceUnitProviderコンポーネントのunitNameプロパティに指定する値はpersistence.xmlで定義する永続ユニット名と一致させてください。
 </p>
+
 <p>
-    データソースのコンポーネント名はpersistence.xmlのデータソース名の定義と一致させてください。</p>
+jpa.diconは他のdiconファイルやテストクラスで<a href="http://s2container.seasar.org/ja/DIContainer.html#Include">インクルード</a>して利用します。
+インクルードする際は、下に示すようにjpa.diconの前にjavaee5.diconを先にインクルードするようにしてください。
+理由は、jpa.diconが読み込まれるコンテナが初期化される時点でjavaee5.diconに定義されたコンポーネントが必要になるからです。
+</p>
+
+<pre>&lt;components&gt;
+  &lt;include path=&quot;javaee5.dicon&quot;/&gt;
+  &lt;include path=&quot;jpa.dicon&quot;/&gt;
+  ...
+&lt;/components&gt;
+</pre>
 
 <h4><a name="persistence.xml">persistence.xml</a></h4>
 <p>クラスパスの通っているディレクトリにMETA-INFディレクトリを作成します。META-INFには、次のようなpersistence.xmlを格納します。</p>
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;persistence&gt;
     &lt;persistence-unit name=&quot;<b>persistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
-        &lt;jta-data-source><strong>dataSourceProxy</strong>&lt;/jta-data-source&gt;
+        &lt;jta-data-source><strong>jdbc/dataSource</strong>&lt;/jta-data-source&gt;
         &lt;provider&gt;org.hibernate.ejb.HibernatePersistence&lt;/provider&gt;
         &lt;properties&gt;
             &lt;property name="hibernate.dialect" 
-                value="org.hibernate.dialect.HSQLDialect"/&gt;
+                value="org.hibernate.dialect.H2Dialect"/&gt;
             &lt;property name="hibernate.jndi.class" 
                 value="org.seasar.extension.j2ee.JndiContextFactory"/&gt;
             &lt;property name="hibernate.transaction.manager_lookup_class" 
@@ -203,19 +210,25 @@ jpa.persistenceUnitManager.getEntityManagerFactory()に渡す永続ユニット�
 &lt;/persistence&gt;
 </pre>
 <p>
-    永続ユニット名にはpersistenceUnitと指定します。</p>
+    永続ユニット名にはpersistenceUnitと指定します。
+</p>
 <p>
-    データソース名には、使用するデータソースのコンポーネント名を指定します。
+    データソース名は、jdbc.diconの<var>名前空間名.dataSourceコンポーネント名</var>と一致させてください。
 </p>
 
 <h3><a name="autoDetectionAndAutoRegister">永続クラスとマッピングファイルの自動検出/自動登録</a></h3>
 <p>
 S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.html">SMART deploy</a>を利用することでエンティティパッケージに置かれた永続クラスやマッピングファイルを自動検出し永続ユニットに自動登録できます。
+S2Hibernate-JPAの自動検出機能はHibernateの自動検出機能と共存できます。
 </p>
 <p>
 「エンティティパッケージ」とは<code>convention.dicon</code>に指定したルートパッケージの直下の個別パッケージ名が「<code>entity</code>」であるパッケージのことです。たとえば、ルートパッケージ名が「<code>example</code>」の場合、エンティティパッケージは「<code>example.entity</code>」となります。
 「永続クラス」とは<code>Entity</code>アノテーション、<code>Embeddable</code>アノテーション、<code>MappedSuperclass</code>アノテーションのいずれかが付与されたクラスを指します。「マッピングファイル」とはJPAのマッピングファイルを意味します。
 </p>
+
+<h4><a name="difference">S2Hibernate-JPAとHibernateの自動検出の違い</a></h4>
+
+TODO
 
 <h4><a name="autoDetection">自動検出</a></h4>
 <p>
@@ -233,10 +246,9 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
 <li>マッピングファイルがエンティティパッケージまたはエンティティパッケージのサブパッケージに存在する </li>
 <li>マッピングファイルの名称が<code><var>Xxx</var>Orm.xml</code>(<code><var>Xxx</var></code>は任意の名称)である </li>
 </ul>
-    <p>
-        SMART deployが有効である場合、S2Hibernate-JPAはS2Hibernate-JPAによる自動検出を優先し、Hibernateの自動検出機能を無効にします。したがって、Hibernateの独自マッピングファイル（<code>.hbm.xml</code>）は自動検出されません。</p>
-    <p>
-        なお、JPA標準のマッピングファイルである<code>META-INF/orm.xml</code>は、SMART deployの有効/無効にかかわらずHibernate EntityManagerにより自動的に読み込まれます。</p>
+<p>
+   JPA標準のマッピングファイルである<code>META-INF/orm.xml</code>は、SMART deployの有効/無効にかかわらずHibernate EntityManagerにより自動的に読み込まれます。
+</p>
     
 <h4>永続ユニットごとの自動登録</h4>
 <p>
@@ -283,11 +295,11 @@ S2Hibernate-JPAは、<a href="http://s2container.seasar.org/ja/S2.4SmartDeploy.h
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;persistence&gt;
     &lt;persistence-unit name=&quot;<b>persistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
-        &lt;jta-data-source><b>dataSourceProxy</b>&lt;/jta-data-source&gt;
+        &lt;jta-data-source><b>jdbc/dataSource</b>&lt;/jta-data-source&gt;
     ．．．
     &lt;/persistence-unit&gt;
     &lt;persistence-unit name=&quot;<b>fooPersistenceUnit</b>&quot; transaction-type=&quot;JTA&quot;&gt;
-        &lt;jta-data-source><strong>dataSourceProxy</strong>&lt;/jta-data-source&gt;
+        &lt;jta-data-source><strong>jdbc/dataSource</strong>&lt;/jta-data-source&gt;
     ．．．
     &lt;/persistence-unit&gt;</pre>
 </li>
@@ -397,7 +409,7 @@ public class FileTest {
 </tr>
 <tr>
 <td width="14"><img height="14" width="14" src="images/spacer.gif" alt="" /></td>
-<td width="766" class="copyright">Copyright© 2004-2005, The Seasar Foundation and the others. All rights reserved.</td>
+<td width="766" class="copyright">Copyrightc 2004-2005, The Seasar Foundation and the others. All rights reserved.</td>
 </tr>
 </table>
 </td>
